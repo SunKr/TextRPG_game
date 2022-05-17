@@ -1,6 +1,7 @@
 #include <iostream>
 #include <time.h>
-
+#include <stdio.h>
+#include <conio.h>
 
 
 enum MAIN_MENU
@@ -329,6 +330,82 @@ int main()
 						// 15 - 5 => 10 + 1 나머지 10 사이 에서 + 5를 하면 5에서 15 사이의 데미지를 받는다.
 						int iAttack = rand() % (tPlayer.iAttackMax - tPlayer.iAttackMin + 1) +
 							+tPlayer.iAttackMin;
+						int iArmor = rand() % (tMonster.iArmorMax - tMonster.iArmorMin + 1)
+							+ tMonster.iArmorMin;
+
+						int iDamage = iAttack - iArmor;
+						// 삼항연산자 : 조건식 ? true일때값 : false일때값:
+						// if(iDamage <1)
+						// iDamage = 1;
+						iDamage = iDamage < 1 ? 1 : iDamage; //최소데미지 1로고정
+
+						//몬스터 hp 를 감소시킨다.
+						tMonster.iHP -= iDamage;
+
+						cout << tPlayer.strName << " 가 " << tMonster.strName <<
+							"에게 " << iDamage << "피해를 입혔습니다. " << endl;
+
+						//몬스터가 죽었을 경우를 처리한다.
+						if (tMonster.iHP <= 0)
+						{
+							cout << tMonster.strName << "몬스터가 사망하였습니다. " << endl;
+
+							tPlayer.iExp += tMonster.iExp; // 경험치 증가
+							int iGold = (rand() % (tMonster.iGoldMax - tMonster.iGoldMin + 1) +
+								tMonster.iGoldMin);
+							tPlayer.tInventory.iGold  += iGold;
+
+							cout << tMonster.iExp << "경험치를 획득하였습니다." << endl;
+							cout << iGold << "Gold를 획득하였습니다 " << endl;
+								
+							tMonster.iHP = tMonster.iHPMax;
+							tMonster.iMP = tMonster.iMPMax;
+							system("pause");
+							break;
+
+						}
+
+						//몬스터가 살아있다면 플레이어를 공격한다. 
+						 iAttack = rand() % (tMonster.iAttackMax - tMonster.iAttackMin + 1) +
+							+tPlayer.iAttackMin;
+						 iArmor = rand() % (tPlayer.iArmorMax - tPlayer.iArmorMin + 1)
+							+ tPlayer.iArmorMin;
+
+						 iDamage = iAttack - iArmor;
+						// 삼항연산자 : 조건식 ? true일때값 : false일때값:
+						// if(iDamage <1)
+						// iDamage = 1;
+						iDamage = iDamage < 1 ? 1 : iDamage; //최소데미지 1로고정
+
+						//플레이어의 hp를 감소시킨다.
+						tPlayer.iHP -= iDamage;
+
+						cout << tMonster.strName << " 가 " << tPlayer.strName <<
+							"에게 " << iDamage << "피해를 입혔습니다. " << endl;
+
+
+						//플레이어가 죽었을경우
+						if (tPlayer.iHP <= 0)
+						{
+							cout << tPlayer.strName << "플레이어가 사망하였습니다. " << endl;
+						
+							// 경험치와 골드를 죽었기때문에 드랍시킨다.
+							int iExp = tPlayer.iExp * 0.1f;
+							int iGold = tPlayer.tInventory.iGold * 0.1f;
+
+							tPlayer.iExp -= iExp;
+							tPlayer.tInventory.iGold -= iGold;
+
+							cout << iExp << " 경험치를 잃었습니다." << endl;
+							cout << iGold << "Gold 를 잃었습니다." << endl;
+							
+
+							//플레이어의 hp 와 mp를 회복한다.
+							tPlayer.iHP = tPlayer.iHPMax;
+							tPlayer.iMP = tPlayer.iMPMax;
+						}
+						system("pause");
+
 					}
 						break;
 					}
